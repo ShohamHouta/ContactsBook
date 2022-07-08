@@ -1,10 +1,61 @@
-import sqlite3,pandas as pd
+import sqlite3
+import pandas as pd
+import os
+from time import sleep
+
 from contact import *
 
 con = sqlite3.connect('contacts.db')
 cur = con.cursor()
 
 
+def Insert(contact: Contact):
+    cur.execute(
+        f"INSERT INTO Contacts VALUES('{contact.firstname}','{contact.lastname}','{contact.address}','{contact.phone}','{contact.email}')")
+    con.commit()
+
+def Delete():
+    while True:
+        data = [row for row in cur.execute("SELECT * FROM contacts")]
+        for index, row in enumerate(data):
+            print(f"{index} : {row}")
+        choice = input("Which Contact do you wish to delete:")
+        try:
+            choice = int(choice)
+            if choice in range(0,len(data)):
+                cur.execute(f"DELETE FROM Contacts WHERE name='{row[0]}' AND last='{row[1]}' and address='{row[2]}' AND phone='{row[3]}'")
+                con.commit()
+            break
+        except ValueError:
+            print("Contact not exists!")
+    
+def Update(contact: Contact):
+    pass
+
+def Search(contact: Contact):
+    pass
+
+def Menu():
+    while True:
+        os.system("clear")
+        print("""================================================================
+                        : CLI CONTACT BOOK :
+================================================================
+
+    [1] Add New Contact.
+    [2] Remove Contact.
+    [3] Edit Contact.
+    [4] Search Contact.
+    [0] Quit
+    """)
+        choice = input("1-4,0>")
+        try:
+            choice = int(choice)
+            break
+        except ValueError:
+            print("Option not found!")
+            sleep(2)
+    return choice
 
 def create_contact():
     """
@@ -13,41 +64,51 @@ def create_contact():
     Country_Codes = pd.read_csv("PhonesCountryCodes.csv")
     Codex = Country_Codes["COUNTRY CODE"].to_list()
     Countries = Country_Codes["COUNTRY"].to_list()
-    region_list = list(zip(Countries,Codex))
-    
+    region_list = list(zip(Countries, Codex))
+
     print("New Entry:")
-    
+
     name = input("Enter a name:")
     lname = input("Enter last name:")
     address = input("Enter an address:")
-    
+
     while True:
-        try:    
-            for index,(c, code) in enumerate(region_list):
+        try:
+            for index, (c, code) in enumerate(region_list):
                 print(f"({index}) {c}:{code}")
-    
+
             choice = int(input("Chose Your country Code:"))
-            country_code = '+'+Codex[choice] 
+            country_code = '+'+Codex[choice]
             phone = country_code + input("Enter phone number:")
-    
+
             InfoChecks.phone_check(phone)
-    
+
             email = input("Enter email address:")
-    
+
             InfoChecks.email_check(email)
             break
-    
+
         except InvalidPhone:
             print("Invalid phone number!")
         except InvalidEmail:
             print("Invalid email address!")
-            
-    contact = Contact(name,lname,address,phone,email)
+
+    contact = Contact(name, lname, address, phone, email)
     return contact
 
+
 def main():
-    c = create_contact()
-    print(c)
-    
+    while True:
+        match Menu():
+            case 1:
+                c = create_contact()
+                Insert(c)
+            case 2:
+                Delete()
+                break
+            case 0:
+                break
+
+
 if __name__ == '__main__':
     main()

@@ -62,6 +62,14 @@ class Contact:
     def fullname(self):
         return f"{self.Name} {self.Last}"
 
+    @property
+    def firstname(self):
+        return self.Name
+    
+    @property
+    def lastname(self):
+        return self.Last
+    
     def __repr__(self) -> str:
         return f"({self.Name} {self.Last},{self.Address},{self.Phone},{self.Email})"
                        
