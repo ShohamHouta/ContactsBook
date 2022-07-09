@@ -25,7 +25,7 @@ def Delete():
         if len(data) >=1:
             for index, row in enumerate(data):
                 print(f"{index} : {row}")
-            choice = input("Which Contact do you wish to delete:")
+            choice = input("Which Contact do you wish to delete(press c to cancel):")
             try:
                 choice = int(choice)
                 if choice in range(0, len(data)):
@@ -35,9 +35,14 @@ def Delete():
                     deleted = True
                 break
             except ValueError:
-                print("Contact not exists!")
+                if choice == 'c':
+                    break
+                else:
+                    print("Contact not exists!")
+                    sleep(2)
         else:
             print("Contacts book is empty!")
+            sleep(2)
             break
     return deleted
 
@@ -45,8 +50,20 @@ def Update():
     pass
 
 
-def Search(contact: Contact):
-    pass
+def Search():
+    search_query = input("Search a contact:").split(" ")
+    data = [row for row in cur.execute(f"SELECT * FROM Contacts")]
+    for row in data:
+        row = list(row)
+        if row[0] == search_query[0]:
+            print(row)
+        elif row[0] == search_query[0] and row[1]==search_query[1]:
+            print(row)
+        elif row[1] ==search_query[0]:
+            print(row)
+        else:
+            print("Contact not found!")    
+    input("Press any key to continue....")
 
 
 def Menu():
@@ -68,7 +85,7 @@ def Menu():
             break
         except ValueError:
             print("Option not found!")
-            sleep(2)
+            sleep(1)
     return choice
 
 
@@ -120,9 +137,14 @@ def main():
                 Insert(c)
             case 2:
                 if Delete():
-                    break
+                    print("Action was successfull!")
+                    sleep(1)
             case 3:
                 Update()
+                
+            case 4:
+                Search()
+                
             case 0:
                 break
 
