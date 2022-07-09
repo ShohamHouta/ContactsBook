@@ -10,30 +10,44 @@ cur = con.cursor()
 
 
 def Insert(contact: Contact):
+    """
+    Create new entry in DB for new contact
+    """
     cur.execute(
         f"INSERT INTO Contacts VALUES('{contact.firstname}','{contact.lastname}','{contact.address}','{contact.phone}','{contact.email}')")
     con.commit()
 
+
 def Delete():
+    data = [row for row in cur.execute("SELECT * FROM contacts")]
+    deleted = False
     while True:
-        data = [row for row in cur.execute("SELECT * FROM contacts")]
-        for index, row in enumerate(data):
-            print(f"{index} : {row}")
-        choice = input("Which Contact do you wish to delete:")
-        try:
-            choice = int(choice)
-            if choice in range(0,len(data)):
-                cur.execute(f"DELETE FROM Contacts WHERE name='{row[0]}' AND last='{row[1]}' and address='{row[2]}' AND phone='{row[3]}'")
-                con.commit()
+        if len(data) >=1:
+            for index, row in enumerate(data):
+                print(f"{index} : {row}")
+            choice = input("Which Contact do you wish to delete:")
+            try:
+                choice = int(choice)
+                if choice in range(0, len(data)):
+                    cur.execute(
+                        f"DELETE FROM Contacts WHERE name='{row[0]}' AND last='{row[1]}' and address='{row[2]}' AND phone='{row[3]}'")
+                    con.commit()
+                    deleted = True
+                break
+            except ValueError:
+                print("Contact not exists!")
+        else:
+            print("Contacts book is empty!")
             break
-        except ValueError:
-            print("Contact not exists!")
-    
-def Update(contact: Contact):
+    return deleted
+
+def Update():
     pass
+
 
 def Search(contact: Contact):
     pass
+
 
 def Menu():
     while True:
@@ -56,6 +70,7 @@ def Menu():
             print("Option not found!")
             sleep(2)
     return choice
+
 
 def create_contact():
     """
@@ -104,8 +119,10 @@ def main():
                 c = create_contact()
                 Insert(c)
             case 2:
-                Delete()
-                break
+                if Delete():
+                    break
+            case 3:
+                Update()
             case 0:
                 break
 
