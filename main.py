@@ -3,11 +3,12 @@ import pandas as pd
 import os
 from time import sleep
 
+from tomlkit import table
+
 from contact import *
 
 con = sqlite3.connect('contacts.db')
 cur = con.cursor()
-
 
 def Insert(contact: Contact):
     """
@@ -46,25 +47,27 @@ def Delete():
             break
     return deleted
 
-def Update():
-    pass
-
 
 def Search():
-    search_query = input("Search a contact:").split(" ")
-    data = [row for row in cur.execute(f"SELECT * FROM Contacts")]
-    for row in data:
-        row = list(row)
-        if row[0] == search_query[0]:
-            print(row)
-        elif row[0] == search_query[0] and row[1]==search_query[1]:
-            print(row)
-        elif row[1] ==search_query[0]:
-            print(row)
-        else:
-            print("Contact not found!")    
-    input("Press any key to continue....")
+    quary = input("Search a contact:").title()
+    data = [row for row in cur.execute("SELECT * FROM contacts")]
+    if ' ' in quary:
+        contact_name = quary.split(" ")
+        for row in data:
+            name,last,_,_,_ = row
+            if name == contact_name[0] and last == contact_name[1]:
+                print(row)
+            else:
+                print("Contact not found!")    
 
+    elif ' ' not in quary:
+        for row in data:
+            name,last,_,_,_ = row
+            if name == quary or last == quary:
+                print(row)
+            else:
+                print("Contact not found!")    
+    input("Press any key to continue....")
 
 def Menu():
     while True:
@@ -75,8 +78,7 @@ def Menu():
 
     [1] Add New Contact.
     [2] Remove Contact.
-    [3] Edit Contact.
-    [4] Search Contact.
+    [3] Search Contact.
     [0] Quit
     """)
         choice = input("1-4,0>")
@@ -140,11 +142,7 @@ def main():
                     print("Action was successfull!")
                     sleep(1)
             case 3:
-                Update()
-                
-            case 4:
                 Search()
-                
             case 0:
                 break
 
