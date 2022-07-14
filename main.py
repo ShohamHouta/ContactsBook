@@ -5,6 +5,11 @@ from time import sleep
 
 from contact import *
 
+#
+# 
+# 
+# 
+# ###
 con = sqlite3.connect('contacts.db')
 cur = con.cursor()
 
