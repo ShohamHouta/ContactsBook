@@ -47,6 +47,7 @@ def Delete():
             break
     return deleted
 
+##
 
 def Search():
     quary = input("Search a contact:").title()
