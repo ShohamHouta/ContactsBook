@@ -5,11 +5,7 @@ from time import sleep
 
 from contact import *
 
-#
-# 
-# 
-# 
-# ###
+
 con = sqlite3.connect('contacts.db')
 cur = con.cursor()
 
@@ -21,30 +17,6 @@ def Insert(contact: Contact):
         f"INSERT INTO Contacts VALUES('{contact.firstname}','{contact.lastname}','{contact.address}','{contact.phone}','{contact.email}')")
     con.commit()
 
-
-def Update():
-    data = [row for row in cur.execute("SELECT * FROM contacts")]
-    print(len(data))
-    while True:
-        for index,row in enumerate(data):
-            print(f"{index}:{row}")
-        choice = input("chose contact to modify:")
-        try:
-            choice =int(choice)
-            if choice >= 0 and choice<= len(data):
-                name,last,addr,phone,email = data[choice]
-                uquery = """UPDATE Contacts
-                            SET name='',last='',address='', phone='',email='' 
-                            where name=''"""
-            break
-        except ValueError:
-            print("Invalid choice.")
-            break
-        except IndexError:
-            print("Invalid choice.")
-            break
-    input("Press any key to continue....")
-    
 
 
 def Delete():
@@ -107,10 +79,9 @@ def Menu():
     [1] Add New Contact.
     [2] Remove Contact.
     [3] Search Contact.
-    [4] Edit Contact.
     [0] Quit
     """)
-        choice = input("1-4,0>")
+        choice = input("1-3,0>")
         try:
             choice = int(choice)
             break
@@ -172,8 +143,6 @@ def main():
                     sleep(1)
             case 3:
                 Search()
-            case 4:
-                Update()
             case 0:
                 break
 
